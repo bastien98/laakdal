@@ -4,12 +4,15 @@ import datetime
 import boto3
 from botocore.exceptions import NoCredentialsError
 from dotenv import load_dotenv
+
 load_dotenv()
 
 # S3 configuration
 S3_BUCKET = 'test-kobe-laakdal'
 AWS_ACCESS_KEY = os.getenv('AWS_ACCESS_KEY')
 AWS_SECRET_KEY = os.getenv('AWS_SECRET_KEY')
+PI_NAME = os.getenv('PI_NAME')
+PI_FOLDER = os.getenv('PI_FOLDER')
 
 
 def zip_folder(folder_path, output_path):
@@ -33,14 +36,14 @@ def upload_to_s3(local_file, s3_file):
 
 def main():
     date_str = datetime.date.today().strftime("%Y-%m-%d")
-    local_folder_path = f"./photos/{date_str}"
+    local_folder_path = f"./{PI_FOLDER}/{PI_NAME}/{date_str}"
     zip_file_path = f"./tmp/{date_str}_photos.zip"
 
     # Zip the folder
     zip_folder(local_folder_path, zip_file_path)
 
     # Upload to S3
-    s3_file_name = f"photos/{date_str}/{date_str}_photos.zip"
+    s3_file_name = f"{PI_NAME}/{date_str}/{date_str}_photos.zip"
     if upload_to_s3(zip_file_path, s3_file_name):
         print("Upload Successful")
     else:
